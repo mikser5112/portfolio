@@ -68,16 +68,14 @@
 </div>
 
 <div id="videoModal" class="modal" onclick="closeVideo()">
-    <span class="close-btn">&times;</span>
-    <div class="modal-content">
-        <iframe id="modalVideo" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
-</div>
-
-<div id="videoModal" class="modal" onclick="closeVideo()">
-    <span class="close-btn">&times;</span>
-    <div class="modal-content">
-        <iframe id="modalVideo" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <span class="close-btn" onclick="closeVideo()">&times;</span>
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <iframe id="modalVideo" 
+                src="" 
+                frameborder="0" 
+                allow="autoplay; encrypted-media; picture-in-picture" 
+                allowfullscreen>
+        </iframe>
     </div>
 </div>
         </div>

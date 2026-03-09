@@ -250,3 +250,14 @@ a, button, .work-item, .accordion-header, .close-btn {
     /* Центрируем картинку относительно точки клика */
     transform: translate(-50%, -50%); 
 }
+.modal-content {
+    width: 80%;
+    max-width: 1000px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+}
+
+#modalVideo {
+    width: 100%;
+    height: 100%;
+}
