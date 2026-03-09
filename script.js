@@ -1,6 +1,6 @@
-// 1. КУРСОР (ГИТАРА)
+// 1. КУРСОР-ГИТАРА (Z-index и плавность)
 const follower = document.getElementById('cursor-follower');
-let mouseX = -100, mouseY = -100; // Скрываем курсор за пределами экрана при старте
+let mouseX = -100, mouseY = -100;
 let ballX = -100, ballY = -100;
 
 window.addEventListener('mousemove', e => { 
@@ -9,7 +9,6 @@ window.addEventListener('mousemove', e => {
 });
 
 function animateCursor() {
-    // Плавное следование за мышью
     ballX += (mouseX - ballX) * 0.15;
     ballY += (mouseY - ballY) * 0.15;
     
@@ -20,12 +19,12 @@ function animateCursor() {
 }
 animateCursor();
 
-// Скрываем/показываем курсор при входе в окно браузера
+// Скрываем курсор, когда уходим из окна
 document.addEventListener('mouseleave', () => { follower.style.opacity = '0'; });
 document.addEventListener('mouseenter', () => { follower.style.opacity = '1'; });
 
 
-// 2. РУКА (АНИМАЦИЯ ПРИ СКРОЛЛЕ)
+// 2. АНИМАЦИЯ РУКИ ПРИ СКРОЛЛЕ
 const hand = document.getElementById('scroll-hand');
 const aboutSection = document.querySelector('.about');
 
@@ -40,8 +39,6 @@ window.addEventListener('scroll', () => {
         progress = Math.max(0, Math.min(1, progress));
 
         const isMobile = window.innerWidth <= 768;
-        
-        // Настройка движения руки
         const moveX = isMobile ? (1 - progress) * 100 : (1 - progress) * 400;
         const rotation = isMobile ? (25 - progress * 20) : (40 - progress * 30);
         
@@ -51,25 +48,43 @@ window.addEventListener('scroll', () => {
 });
 
 
-// 3. REVEAL АНИМАЦИИ (ПОЯВЛЕНИЕ КОНТЕНТА)
-const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('active-reveal');
-    });
-}, { threshold: 0.1 });
+// 3. ОТКРЫТИЕ ВИДЕО (YOUTUBE EMBED)
+function openVideo(videoId) {
+    const modal = document.getElementById('videoModal');
+    const iframe = document.getElementById('modalVideo');
+    
+    if (modal && iframe) {
+        // Формируем правильную ссылку для встраивания (только так YouTube разрешает показ на сайтах)
+        iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1&rel=0&modestbranding=1";
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Убираем скролл сайта под модалкой
+        
+        // Снимаем фокус с кнопок, чтобы курсор-гитара не залипал
+        document.activeElement.blur();
+    }
+}
 
-document.querySelectorAll('.reveal-text, .reveal-left, .reveal-scale, .reveal-up').forEach(el => {
-    revealObserver.observe(el);
-});
+// 4. ЗАКРЫТИЕ ВИДЕО
+function closeVideo() {
+    const modal = document.getElementById('videoModal');
+    const iframe = document.getElementById('modalVideo');
+    
+    if (modal && iframe) {
+        modal.style.display = 'none';
+        iframe.src = ""; // Очищаем ссылку, чтобы видео перестало играть
+        document.body.style.overflow = 'auto'; // Возвращаем скролл
+    }
+}
 
 
-// 4. FAQ (АККОРДЕОН)
+// 5. FAQ (АККОРДЕОН)
 document.querySelectorAll('.accordion-header').forEach(btn => {
     btn.addEventListener('click', () => {
         const item = btn.parentElement;
         const isActive = item.classList.contains('active');
         
-        // Закрываем другие открытые вкладки (опционально)
+        // Закрываем другие
         document.querySelectorAll('.accordion-item').forEach(el => {
             el.classList.remove('active');
             el.querySelector('.accordion-content').style.maxHeight = null;
@@ -86,32 +101,20 @@ document.querySelectorAll('.accordion-header').forEach(btn => {
 });
 
 
-// 5. ВИДЕО МОДАЛКА (YOUTUBE ВЕРСИЯ)
-function openVideo(videoId) {
-    const modal = document.getElementById('videoModal');
-    const iframe = document.getElementById('modalVideo');
-    
-    if (!modal || !iframe) return;
+// 6. ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ (Reveal)
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active-reveal');
+        }
+    });
+}, { threshold: 0.1 });
 
-    // Ссылка на встраивание YouTube с автоплеем
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
-    
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Запрещаем скролл при открытом видео
-}
+document.querySelectorAll('.reveal-text, .reveal-left, .reveal-scale, .reveal-up').forEach(el => {
+    revealObserver.observe(el);
+});
 
-function closeVideo() {
-    const modal = document.getElementById('videoModal');
-    const iframe = document.getElementById('modalVideo');
-    
-    if (!modal || !iframe) return;
-
-    modal.style.display = 'none';
-    iframe.src = ""; // Останавливаем видео
-    document.body.style.overflow = 'auto'; // Возвращаем скролл
-}
-
-// Закрытие модалки при клике на Esc
+// Закрытие модалки по кнопке Esc
 document.addEventListener('keydown', (e) => {
     if (e.key === "Escape") closeVideo();
 });
