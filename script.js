@@ -1,23 +1,18 @@
-// 1. МЕРЦАНИЕ (FLICKER)
+// 1. МЕРЦАНИЕ
 const initFlicker = () => {
     const el = document.querySelectorAll('.flicker-text');
     if (!el.length) return setTimeout(initFlicker, 100);
     setInterval(() => {
         el.forEach(e => {
             const r = Math.random();
-            if (r > 0.94) {
-                e.style.opacity = '0.3';
-                e.style.filter = 'blur(2px) brightness(1.5)';
-            } else {
-                e.style.opacity = '1';
-                e.style.filter = 'none';
-            }
+            e.style.opacity = r > 0.95 ? '0.3' : '1';
+            e.style.filter = r > 0.95 ? 'blur(1px) brightness(1.2)' : 'none';
         });
     }, 60);
 };
 initFlicker();
 
-// 2. АККОРДЕОН (FAQ)
+// 2. FAQ
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.accordion-header').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -25,16 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const content = item.querySelector('.accordion-content');
             const isActive = item.classList.contains('active');
             
-            // Сначала закрываем все остальные
-            document.querySelectorAll('.accordion-item').forEach(el => {
-                if (el !== item) {
-                    el.classList.remove('active');
-                    el.querySelector('.accordion-content').style.maxHeight = null;
-                    el.querySelector('i').className = 'fa-solid fa-plus';
-                }
-            });
-
-            // Открываем/закрываем текущий
             if (!isActive) {
                 item.classList.add('active');
                 content.style.maxHeight = content.scrollHeight + "px";
@@ -48,18 +33,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 3. КУРСОР-ГИТАРА
+// 3. КУРСОР
 const follower = document.getElementById('cursor-follower');
 let mouseX = -100, mouseY = -100, ballX = -100, ballY = -100;
 window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-function animateCursor() {
+function animate() {
     ballX += (mouseX - ballX) * 0.15; ballY += (mouseY - ballY) * 0.15;
     if(follower) { follower.style.left = ballX + 'px'; follower.style.top = ballY + 'px'; }
-    requestAnimationFrame(animateCursor);
+    requestAnimationFrame(animate);
 }
-animateCursor();
+animate();
 
-// 4. АНИМАЦИЯ РУКИ ПРИ СКРОЛЛЕ
+// 4. РУКА
 const hand = document.getElementById('scroll-hand');
 const aboutSection = document.querySelector('.about');
 window.addEventListener('scroll', () => {
@@ -74,7 +59,7 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// 5. REVEAL (ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ)
+// 5. REVEAL
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('active-reveal');
