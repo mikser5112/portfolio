@@ -71,11 +71,12 @@
     <span class="close-btn" onclick="closeVideo()">&times;</span>
     <div class="modal-content" onclick="event.stopPropagation()">
         <iframe id="modalVideo" 
-                src="" 
-                frameborder="0" 
-                allow="autoplay; encrypted-media; picture-in-picture" 
-                allowfullscreen>
-        </iframe>
+        src="" 
+        frameborder="0" 
+        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; gyroscope" 
+        sandbox="allow-forms allow-scripts allow-pointer-lock allow-same-origin allow-top-navigation allow-presentation"
+        allowfullscreen>
+</iframe>
     </div>
 </div>
         </div>

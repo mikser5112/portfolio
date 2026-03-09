@@ -54,14 +54,12 @@ function openVideo(videoId) {
     const iframe = document.getElementById('modalVideo');
     
     if (modal && iframe) {
-        // Формируем правильную ссылку для встраивания (только так YouTube разрешает показ на сайтах)
-        iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1&rel=0&modestbranding=1";
+        // playsinline=1 — разрешает видео играть внутри страницы (для iOS)
+        // mute=1 — разрешает автозапуск (без этого телефон может блокировать плеер)
+        iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1";
         
         modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // Убираем скролл сайта под модалкой
-        
-        // Снимаем фокус с кнопок, чтобы курсор-гитара не залипал
-        document.activeElement.blur();
+        document.body.style.overflow = 'hidden';
     }
 }
 
