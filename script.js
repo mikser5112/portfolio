@@ -6,82 +6,49 @@ const initFlicker = () => {
         el.forEach(e => {
             const r = Math.random();
             if (r > 0.94) {
-                e.style.opacity = '0.2';
-                e.style.filter = 'blur(2px) brightness(2)';
-            } else if (r > 0.88) {
-                e.style.opacity = '0.5';
-                e.style.filter = 'blur(1px)';
+                e.style.opacity = '0.3';
+                e.style.filter = 'blur(2px) brightness(1.5)';
             } else {
                 e.style.opacity = '1';
                 e.style.filter = 'none';
             }
         });
-    }, 50);
+    }, 60);
 };
 initFlicker();
 
-// 2. ЛОГИКА ВИДЕО (МОБИЛКИ VS ПК)
-function handleVideo(videoId) {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (isMobile) {
-        // На телефонах — просто открываем прямую ссылку
-        window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
-    } else {
-        // На ПК — открываем модалку
-        const modal = document.getElementById('videoModal');
-        const iframe = document.getElementById('modalVideo');
-        if (modal && iframe) {
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-    }
-}
-
-function closeVideo() {
-    const modal = document.getElementById('videoModal');
-    const iframe = document.getElementById('modalVideo');
-    if (modal && iframe) {
-        modal.style.display = 'none';
-        iframe.src = "";
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// 3. ИНИЦИАЛИЗАЦИЯ СОБЫТИЙ
+// 2. АККОРДЕОН (FAQ)
 document.addEventListener('DOMContentLoaded', () => {
-    // Клики по работам
-    document.querySelectorAll('.work-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const id = this.getAttribute('data-video');
-            if (id) handleVideo(id);
-        });
-    });
-
-    // FAQ Аккордеон
     document.querySelectorAll('.accordion-header').forEach(btn => {
         btn.addEventListener('click', () => {
             const item = btn.parentElement;
             const content = item.querySelector('.accordion-content');
             const isActive = item.classList.contains('active');
             
+            // Сначала закрываем все остальные
             document.querySelectorAll('.accordion-item').forEach(el => {
-                el.classList.remove('active');
-                el.querySelector('.accordion-content').style.maxHeight = null;
-                el.querySelector('i').classList.replace('fa-minus', 'fa-plus');
+                if (el !== item) {
+                    el.classList.remove('active');
+                    el.querySelector('.accordion-content').style.maxHeight = null;
+                    el.querySelector('i').className = 'fa-solid fa-plus';
+                }
             });
 
+            // Открываем/закрываем текущий
             if (!isActive) {
                 item.classList.add('active');
                 content.style.maxHeight = content.scrollHeight + "px";
-                btn.querySelector('i').classList.replace('fa-minus', 'fa-plus');
+                btn.querySelector('i').className = 'fa-solid fa-minus';
+            } else {
+                item.classList.remove('active');
+                content.style.maxHeight = null;
+                btn.querySelector('i').className = 'fa-solid fa-plus';
             }
         });
     });
 });
 
-// 4. КУРСОР-ГИТАРА
+// 3. КУРСОР-ГИТАРА
 const follower = document.getElementById('cursor-follower');
 let mouseX = -100, mouseY = -100, ballX = -100, ballY = -100;
 window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
@@ -92,7 +59,7 @@ function animateCursor() {
 }
 animateCursor();
 
-// 5. АНИМАЦИЯ РУКИ ПРИ СКРОЛЛЕ
+// 4. АНИМАЦИЯ РУКИ ПРИ СКРОЛЛЕ
 const hand = document.getElementById('scroll-hand');
 const aboutSection = document.querySelector('.about');
 window.addEventListener('scroll', () => {
@@ -107,12 +74,10 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// 6. REVEAL (ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ)
+// 5. REVEAL (ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ)
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('active-reveal');
     });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal-text, .reveal-left, .reveal-scale, .reveal-up').forEach(el => revealObserver.observe(el));
-
-document.addEventListener('keydown', e => { if (e.key === "Escape") closeVideo(); });
