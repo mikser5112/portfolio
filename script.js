@@ -1,118 +1,103 @@
-// 1. КУРСОР-ГИТАРА (Z-index и плавность)
-const follower = document.getElementById('cursor-follower');
-let mouseX = -100, mouseY = -100;
-let ballX = -100, ballY = -100;
-
-window.addEventListener('mousemove', e => { 
-    mouseX = e.clientX; 
-    mouseY = e.clientY; 
-});
-
-function animateCursor() {
-    ballX += (mouseX - ballX) * 0.15;
-    ballY += (mouseY - ballY) * 0.15;
+// ==========================================
+// 1. МЕРЦАНИЕ (FLICKER) — УЛЬТИМАТИВНЫЙ ФИКС
+// ==========================================
+const initFlicker = () => {
+    const elements = document.querySelectorAll('.flicker-text');
     
-    follower.style.left = ballX + 'px';
-    follower.style.top = ballY + 'px';
-    
-    requestAnimationFrame(animateCursor);
-}
-animateCursor();
-
-// Скрываем курсор, когда уходим из окна
-document.addEventListener('mouseleave', () => { follower.style.opacity = '0'; });
-document.addEventListener('mouseenter', () => { follower.style.opacity = '1'; });
-
-
-// 2. АНИМАЦИЯ РУКИ ПРИ СКРОЛЛЕ
-const hand = document.getElementById('scroll-hand');
-const aboutSection = document.querySelector('.about');
-
-window.addEventListener('scroll', () => {
-    if (!aboutSection || !hand) return;
-
-    const rect = aboutSection.getBoundingClientRect();
-    const winH = window.innerHeight;
-
-    if (rect.top <= winH * 0.8 && rect.bottom >= 0) {
-        let progress = (winH * 0.8 - rect.top) / (winH * 0.6);
-        progress = Math.max(0, Math.min(1, progress));
-
-        const isMobile = window.innerWidth <= 768;
-        const moveX = isMobile ? (1 - progress) * 100 : (1 - progress) * 400;
-        const rotation = isMobile ? (25 - progress * 20) : (40 - progress * 30);
-        
-        hand.style.opacity = isMobile ? Math.min(progress, 0.4) : progress;
-        hand.style.transform = `translateX(${moveX}px) rotate(${rotation}deg)`;
+    if (elements.length === 0) {
+        // Если элементов нет, пробуем еще раз через 100мс
+        setTimeout(initFlicker, 100);
+        return;
     }
-});
 
+    console.log("Мерцание запущено! Найдено элементов:", elements.length);
 
-// 3. ОТКРЫТИЕ ВИДЕО (YOUTUBE EMBED)
+    setInterval(() => {
+        elements.forEach(el => {
+            const r = Math.random();
+            if (r > 0.96) {
+                el.style.opacity = '0.1';
+                el.style.filter = 'blur(3px) brightness(2)';
+            } else if (r > 0.90) {
+                el.style.opacity = '0.5';
+                el.style.filter = 'blur(1px)';
+            } else {
+                el.style.opacity = '1';
+                el.style.filter = 'none';
+            }
+        });
+    }, 45); 
+};
+
+// Запуск немедленно
+initFlicker();
+
+// ==========================================
+// 2. ОТКРЫТИЕ ВИДЕО (МОБИЛКИ + ДЕСКТОП)
+// ==========================================
 function openVideo(videoId) {
     const modal = document.getElementById('videoModal');
     const iframe = document.getElementById('modalVideo');
-    
     if (modal && iframe) {
-        // playsinline=1 — разрешает видео играть внутри страницы (для iOS)
-        // mute=1 — разрешает автозапуск (без этого телефон может блокировать плеер)
-        iframe.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1";
-        
+        // playsinline и mute — критично для работы на смартфонах
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`;
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
 }
 
-// 4. ЗАКРЫТИЕ ВИДЕО
 function closeVideo() {
     const modal = document.getElementById('videoModal');
     const iframe = document.getElementById('modalVideo');
-    
     if (modal && iframe) {
         modal.style.display = 'none';
-        iframe.src = ""; // Очищаем ссылку, чтобы видео перестало играть
-        document.body.style.overflow = 'auto'; // Возвращаем скролл
+        iframe.src = "";
+        document.body.style.overflow = 'auto';
     }
 }
 
+// ==========================================
+// 3. КУРСОР И ОСТАЛЬНОЕ
+// ==========================================
+const follower = document.getElementById('cursor-follower');
+let mouseX = -100, mouseY = -100, ballX = -100, ballY = -100;
+window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
 
-// 5. FAQ (АККОРДЕОН)
-document.querySelectorAll('.accordion-header').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const item = btn.parentElement;
-        const isActive = item.classList.contains('active');
-        
-        // Закрываем другие
-        document.querySelectorAll('.accordion-item').forEach(el => {
-            el.classList.remove('active');
-            el.querySelector('.accordion-content').style.maxHeight = null;
-            el.querySelector('i').classList.replace('fa-minus', 'fa-plus');
+function animateCursor() {
+    ballX += (mouseX - ballX) * 0.15;
+    ballY += (mouseY - ballY) * 0.15;
+    if (follower) {
+        follower.style.left = ballX + 'px';
+        follower.style.top = ballY + 'px';
+    }
+    requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// FAQ и мобильные тапы
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.work-item').forEach(item => {
+        item.addEventListener('touchend', function() {
+            const attr = this.getAttribute('onclick');
+            if (attr) {
+                const id = attr.match(/'([^']+)'/)[1];
+                openVideo(id);
+            }
         });
+    });
 
-        if (!isActive) {
-            item.classList.add('active');
+    document.querySelectorAll('.accordion-header').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.parentElement;
             const content = item.querySelector('.accordion-content');
-            content.style.maxHeight = content.scrollHeight + "px";
-            btn.querySelector('i').classList.replace('fa-plus', 'fa-minus');
-        }
+            const isActive = item.classList.contains('active');
+            if (!isActive) {
+                item.classList.add('active');
+                content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+                item.classList.remove('active');
+                content.style.maxHeight = null;
+            }
+        });
     });
-});
-
-
-// 6. ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ (Reveal)
-const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('active-reveal');
-        }
-    });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.reveal-text, .reveal-left, .reveal-scale, .reveal-up').forEach(el => {
-    revealObserver.observe(el);
-});
-
-// Закрытие модалки по кнопке Esc
-document.addEventListener('keydown', (e) => {
-    if (e.key === "Escape") closeVideo();
 });
