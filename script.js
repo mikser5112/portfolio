@@ -1,57 +1,60 @@
-// 1. КУРСОР (ГИБКИЙ)
+// 1. КУРСОР (ГИТАРА)
 const follower = document.getElementById('cursor-follower');
-let mouseX = 0, mouseY = 0, ballX = 0, ballY = 0;
+let mouseX = -100, mouseY = -100; // Скрываем курсор за пределами экрана при старте
+let ballX = -100, ballY = -100;
 
-// Отслеживаем мышь только если это не тачскрин
 window.addEventListener('mousemove', e => { 
     mouseX = e.clientX; 
     mouseY = e.clientY; 
 });
 
 function animateCursor() {
-    // Плавное следование (lerp)
+    // Плавное следование за мышью
     ballX += (mouseX - ballX) * 0.15;
     ballY += (mouseY - ballY) * 0.15;
     
-    if (follower) {
-        follower.style.left = ballX + 'px';
-        follower.style.top = ballY + 'px';
-    }
+    follower.style.left = ballX + 'px';
+    follower.style.top = ballY + 'px';
+    
     requestAnimationFrame(animateCursor);
 }
 animateCursor();
 
-// 2. РУКА (АДАПТИВНАЯ АНИМАЦИЯ)
+// Скрываем/показываем курсор при входе в окно браузера
+document.addEventListener('mouseleave', () => { follower.style.opacity = '0'; });
+document.addEventListener('mouseenter', () => { follower.style.opacity = '1'; });
+
+
+// 2. РУКА (АНИМАЦИЯ ПРИ СКРОЛЛЕ)
 const hand = document.getElementById('scroll-hand');
 const aboutSection = document.querySelector('.about');
 
 window.addEventListener('scroll', () => {
-    // Если экран меньше 768px, отключаем тяжелые расчеты для руки
-    if (window.innerWidth <= 768 || !hand || !aboutSection) return;
+    if (!aboutSection || !hand) return;
 
     const rect = aboutSection.getBoundingClientRect();
     const winH = window.innerHeight;
 
-    // Анимация срабатывает, когда секция в поле зрения
     if (rect.top <= winH * 0.8 && rect.bottom >= 0) {
         let progress = (winH * 0.8 - rect.top) / (winH * 0.6);
         progress = Math.max(0, Math.min(1, progress));
 
-        // На десктопе вылет и поворот
-        const moveX = (1 - progress) * 400;
-        const rotation = (40 - progress * 30);
+        const isMobile = window.innerWidth <= 768;
         
-        hand.style.opacity = progress;
+        // Настройка движения руки
+        const moveX = isMobile ? (1 - progress) * 100 : (1 - progress) * 400;
+        const rotation = isMobile ? (25 - progress * 20) : (40 - progress * 30);
+        
+        hand.style.opacity = isMobile ? Math.min(progress, 0.4) : progress;
         hand.style.transform = `translateX(${moveX}px) rotate(${rotation}deg)`;
     }
 });
 
-// 3. REVEAL АНИМАЦИИ (ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ)
+
+// 3. REVEAL АНИМАЦИИ (ПОЯВЛЕНИЕ КОНТЕНТА)
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('active-reveal');
-        }
+        if (entry.isIntersecting) entry.target.classList.add('active-reveal');
     });
 }, { threshold: 0.1 });
 
@@ -59,62 +62,56 @@ document.querySelectorAll('.reveal-text, .reveal-left, .reveal-scale, .reveal-up
     revealObserver.observe(el);
 });
 
-// 4. FAQ (АККОРДЕОН С ЦЕНТРИРОВАНИЕМ)
+
+// 4. FAQ (АККОРДЕОН)
 document.querySelectorAll('.accordion-header').forEach(btn => {
     btn.addEventListener('click', () => {
         const item = btn.parentElement;
-        const content = item.querySelector('.accordion-content');
-        const icon = btn.querySelector('i');
+        const isActive = item.classList.contains('active');
         
         // Закрываем другие открытые вкладки (опционально)
-        document.querySelectorAll('.accordion-item').forEach(otherItem => {
-            if (otherItem !== item && otherItem.classList.contains('active')) {
-                otherItem.classList.remove('active');
-                otherItem.querySelector('.accordion-content').style.maxHeight = "0";
-                otherItem.querySelector('i').classList.replace('fa-minus', 'fa-plus');
-            }
+        document.querySelectorAll('.accordion-item').forEach(el => {
+            el.classList.remove('active');
+            el.querySelector('.accordion-content').style.maxHeight = null;
+            el.querySelector('i').classList.replace('fa-minus', 'fa-plus');
         });
 
-        item.classList.toggle('active');
-
-        if (item.classList.contains('active')) {
+        if (!isActive) {
+            item.classList.add('active');
+            const content = item.querySelector('.accordion-content');
             content.style.maxHeight = content.scrollHeight + "px";
-            if (icon) icon.classList.replace('fa-plus', 'fa-minus');
-        } else {
-            content.style.maxHeight = "0";
-            if (icon) icon.classList.replace('fa-minus', 'fa-plus');
+            btn.querySelector('i').classList.replace('fa-plus', 'fa-minus');
         }
     });
 });
 
-// 5. ВИДЕО МОДАЛКА
-function openVideo(src) {
-    const modal = document.getElementById('videoModal');
-    const video = document.getElementById('modalVideo');
-    if (!modal || !video) return;
 
-    video.src = src;
-    modal.style.display = 'flex';
-    video.play();
+// 5. ВИДЕО МОДАЛКА (YOUTUBE ВЕРСИЯ)
+function openVideo(videoId) {
+    const modal = document.getElementById('videoModal');
+    const iframe = document.getElementById('modalVideo');
     
-    // Блокируем скролл страницы при открытом видео
-    document.body.style.overflow = 'hidden';
+    if (!modal || !iframe) return;
+
+    // Ссылка на встраивание YouTube с автоплеем
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+    
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Запрещаем скролл при открытом видео
 }
 
 function closeVideo() {
     const modal = document.getElementById('videoModal');
-    const video = document.getElementById('modalVideo');
-    if (!modal || !video) return;
+    const iframe = document.getElementById('modalVideo');
+    
+    if (!modal || !iframe) return;
 
     modal.style.display = 'none';
-    video.pause();
-    video.src = "";
-    
-    // Возвращаем скролл
-    document.body.style.overflow = 'auto';
+    iframe.src = ""; // Останавливаем видео
+    document.body.style.overflow = 'auto'; // Возвращаем скролл
 }
 
-// Закрытие модалки по клавише ESC
-window.addEventListener('keydown', (e) => {
+// Закрытие модалки при клике на Esc
+document.addEventListener('keydown', (e) => {
     if (e.key === "Escape") closeVideo();
 });

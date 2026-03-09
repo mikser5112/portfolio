@@ -210,3 +210,43 @@ html, body {
         max-height: 70vh;
     }
 }
+/* Стили для YouTube iframe в модалке */
+.modal-content {
+    width: 90%;
+    max-width: 1100px;
+    aspect-ratio: 16 / 9; /* Сохраняем формат видео */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalVideo {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--burgundy);
+    box-shadow: 0 0 30px rgba(77, 0, 0, 0.5);
+}
+/* style.css */
+
+* { 
+    /* Убираем !important, чтобы не блокировать всё намертво */
+    cursor: none; 
+}
+
+/* Убедись, что ссылки и кнопки тоже не показывают дефолтную стрелку */
+a, button, .work-item, .accordion-header, .close-btn {
+    cursor: none !important;
+}
+
+#cursor-follower { 
+    position: fixed; 
+    width: 30px; 
+    height: 30px; 
+    background: url('gitar.cur') no-repeat center/contain; 
+    pointer-events: none; 
+    /* Самый высокий слой, выше модалки и видео */
+    z-index: 999999 !important; 
+    filter: drop-shadow(0 0 5px var(--burgundy));
+    /* Центрируем картинку относительно точки клика */
+    transform: translate(-50%, -50%); 
+}
