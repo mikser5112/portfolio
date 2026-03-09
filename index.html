@@ -31,7 +31,7 @@
     <header class="hero" id="home">
         <div class="hero-vignette"></div>
         <div class="hero-content">
-            <h1 class="glitch-title flicker flicker-text">VIDEO CREATING</h1>
+            <h1 class="glitch-title flicker-text">VIDEO CREATING</h1>
             <p class="hero-sub reveal-text">template videos in the past. a person needs a person</p>
         </div>
     </header>
@@ -56,30 +56,25 @@
         </div>
         <div class="video-marquee">
             <div class="marquee-content">
-    <div class="work-item" onclick="openVideo('2dM3Pmdkvuk')"><img src="photos/Horisontal Preview1.png"></div>
-    <div class="work-item" onclick="openVideo('y5UJ13_0ivI')"><img src="photos/Horisontal Preview2.png"></div>
-    <div class="work-item" onclick="openVideo('2_f1VmPqpWk')"><img src="photos/Horisontal Preview4.png"></div>
-    <div class="work-item" onclick="openVideo('JjccF6wnyDs')"><img src="photos/Horisontal Preview3.png"></div>
-    
-    <div class="work-item" onclick="openVideo('2dM3Pmdkvuk')"><img src="photos/Horisontal Preview1.png"></div>
-    <div class="work-item" onclick="openVideo('y5UJ13_0ivI')"><img src="photos/Horisontal Preview2.png"></div>
-    <div class="work-item" onclick="openVideo('2_f1VmPqpWk')"><img src="photos/Horisontal Preview4.png"></div>
-    <div class="work-item" onclick="openVideo('JjccF6wnyDs')"><img src="photos/Horisontal Preview3.png"></div>
-</div>
-
-<div id="videoModal" class="modal" onclick="closeVideo()">
-    <span class="close-btn" onclick="closeVideo()">&times;</span>
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <iframe id="modalVideo" 
-                src="" 
-                frameborder="0" 
-                allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope" 
-                allowfullscreen>
-        </iframe>
-    </div>
-</div>
+                <div class="work-item" data-video="2dM3Pmdkvuk"><img src="photos/Horisontal Preview1.png"></div>
+                <div class="work-item" data-video="y5UJ13_0ivI"><img src="photos/Horisontal Preview2.png"></div>
+                <div class="work-item" data-video="2_f1VmPqpWk"><img src="photos/Horisontal Preview4.png"></div>
+                <div class="work-item" data-video="JjccF6wnyDs"><img src="photos/Horisontal Preview3.png"></div>
+                
+                <div class="work-item" data-video="2dM3Pmdkvuk"><img src="photos/Horisontal Preview1.png"></div>
+                <div class="work-item" data-video="y5UJ13_0ivI"><img src="photos/Horisontal Preview2.png"></div>
+                <div class="work-item" data-video="2_f1VmPqpWk"><img src="photos/Horisontal Preview4.png"></div>
+                <div class="work-item" data-video="JjccF6wnyDs"><img src="photos/Horisontal Preview3.png"></div>
+            </div>
         </div>
     </section>
+
+    <div id="videoModal" class="modal" onclick="closeVideo()">
+        <span class="close-btn" onclick="closeVideo()">&times;</span>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <iframe id="modalVideo" src="" frameborder="0" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
 
     <section class="faq" id="faq">
         <div class="section-content">
@@ -96,14 +91,6 @@
                 <div class="accordion-item reveal-up">
                     <button class="accordion-header">WHAT DO I NEED FROM YOU? <i class="fa-solid fa-plus"></i></button>
                     <div class="accordion-content"><div class="content-inner">Raw footage, a brief overview of the atmosphere, and other requests.</div></div>
-                </div>
-                <div class="accordion-item reveal-up">
-                    <button class="accordion-header">DO YOU DO MOTION DESIGN? <i class="fa-solid fa-plus"></i></button>
-                    <div class="accordion-content"><div class="content-inner">Yes. Kinetic typography, glitch effects, and brutalist transitions are part of the DNA.</div></div>
-                </div>
-                <div class="accordion-item reveal-up">
-                    <button class="accordion-header">REMOTE WORK? <i class="fa-solid fa-plus"></i></button>
-                    <div class="accordion-content"><div class="content-inner">Global. I work with creators worldwide via cloud transfers. Location is irrelevant.</div></div>
                 </div>
             </div>
         </div>
@@ -128,11 +115,6 @@
             </div>
         </div>
     </section>
-
-    <div id="videoModal" class="modal" onclick="closeVideo()">
-        <span class="close-btn">&times;</span>
-        <div class="modal-content"><video id="modalVideo" controls></video></div>
-    </div>
 
     <script src="script.js"></script>
 </body>
